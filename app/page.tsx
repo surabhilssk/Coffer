@@ -1,3 +1,9 @@
+import { AppBar } from "@/components/AppBar";
+
 export default function Home() {
-  return <div className="font-poppins">Coffer_v01</div>;
+  return (
+    <div>
+      <AppBar />
+    </div>
+  );
 }
