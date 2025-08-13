@@ -3,7 +3,7 @@ import { ModeToggle } from "./ModeToggle";
 
 export const AppBar = () => {
   return (
-    <div className="fixed top-0 right-0 left-0 flex justify-between px-16 py-8">
+    <div className="flex justify-between px-16 py-8">
       <div className="flex gap-2">
         <Image
           src={"/coffer_logo.webp"}
