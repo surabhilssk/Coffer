@@ -18,6 +18,7 @@ interface WalletProps {
   index: number;
   isPrivateKeyVisible: boolean;
   onTogglePrivateKey: () => void;
+  onDeleteWallet: () => void;
 }
 
 export const WalletComponent = ({
@@ -26,6 +27,7 @@ export const WalletComponent = ({
   index,
   isPrivateKeyVisible,
   onTogglePrivateKey,
+  onDeleteWallet,
 }: WalletProps) => {
   const maskPrivateKey = (key: string) => {
     return "•".repeat(key.length);
@@ -54,7 +56,10 @@ export const WalletComponent = ({
                 <AlertDialogCancel className="cursor-pointer">
                   Cancel
                 </AlertDialogCancel>
-                <AlertDialogAction className="bg-destructive cursor-pointer text-white">
+                <AlertDialogAction
+                  className="bg-destructive cursor-pointer text-white"
+                  onClick={onDeleteWallet}
+                >
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>

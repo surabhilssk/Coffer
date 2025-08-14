@@ -29,6 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 interface blockWallet {
   publicKey: string;
@@ -36,6 +37,7 @@ interface blockWallet {
 }
 
 export const DashComponent = () => {
+  const router = useRouter();
   const [blockWallet, setBlockWallet] = useState<blockWallet[]>([]);
   const [mnemonicInput, setMnemonicInput] = useState<string>("");
   const [mnemonic, setMnemonic] = useState<string>("");
@@ -99,6 +101,14 @@ export const DashComponent = () => {
     setVisiblePrivateKeys((prev) =>
       prev.map((visible, i) => (i === index ? !visible : visible))
     );
+  };
+
+  const clearWallets = () => {
+    setBlockWallet([]);
+    setVisiblePrivateKeys([]);
+    setMnemonic("");
+    setAccountIndex(0);
+    router.replace("/");
   };
 
   return (
@@ -185,7 +195,10 @@ export const DashComponent = () => {
                     <AlertDialogCancel className="cursor-pointer">
                       Cancel
                     </AlertDialogCancel>
-                    <AlertDialogAction className="bg-destructive cursor-pointer text-white">
+                    <AlertDialogAction
+                      className="bg-destructive cursor-pointer text-white"
+                      onClick={clearWallets}
+                    >
                       Delete
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -202,6 +215,14 @@ export const DashComponent = () => {
                 publicKey={wallet.publicKey}
                 isPrivateKeyVisible={visiblePrivateKeys[index]}
                 onTogglePrivateKey={() => togglePrivateKeyVisibility(index)}
+                onDeleteWallet={() => {
+                  const newWallet = blockWallet.filter((_, i) => i !== index);
+                  const newVisibility = visiblePrivateKeys.filter(
+                    (_, i) => i !== index
+                  );
+                  setBlockWallet(newWallet);
+                  setVisiblePrivateKeys(newVisibility);
+                }}
               />
             ))}
           </div>
