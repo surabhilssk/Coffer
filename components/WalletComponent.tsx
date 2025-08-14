@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,18 +10,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { Button } from "./ui/button";
 
 interface WalletProps {
   publicKey: string;
   privateKey: string;
   index: number;
+  isPrivateKeyVisible: boolean;
+  onTogglePrivateKey: () => void;
 }
 
 export const WalletComponent = ({
   publicKey,
   privateKey,
   index,
+  isPrivateKeyVisible,
+  onTogglePrivateKey,
 }: WalletProps) => {
+  const maskPrivateKey = (key: string) => {
+    return "•".repeat(key.length);
+  };
+
   return (
     <div className="mt-7 border rounded-2xl">
       <div className="flex justify-between items-center px-9 py-6">
@@ -62,8 +71,23 @@ export const WalletComponent = ({
         </div>
         <div className="mt-8">
           <div className="text-xl font-medium">Private Key</div>
-          <div className="mt-2 text-muted-foreground font-light">
-            {privateKey}
+          <div className="flex justify-between items-center mt-2">
+            <div className=" text-muted-foreground font-light">
+              {isPrivateKeyVisible ? privateKey : maskPrivateKey(privateKey)}
+            </div>
+            <div>
+              <Button
+                variant={"ghost"}
+                className="cursor-pointer"
+                onClick={onTogglePrivateKey}
+              >
+                {isPrivateKeyVisible ? (
+                  <Eye size={20} className="text-muted-foreground" />
+                ) : (
+                  <EyeOff size={20} className="text-muted-foreground" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

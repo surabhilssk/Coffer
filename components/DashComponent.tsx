@@ -95,6 +95,12 @@ export const DashComponent = () => {
     }
   };
 
+  const togglePrivateKeyVisibility = (index: number) => {
+    setVisiblePrivateKeys((prev) =>
+      prev.map((visible, i) => (i === index ? !visible : visible))
+    );
+  };
+
   return (
     <div>
       <AppBar />
@@ -194,6 +200,8 @@ export const DashComponent = () => {
                 index={index + 1}
                 privateKey={wallet.privateKey}
                 publicKey={wallet.publicKey}
+                isPrivateKeyVisible={visiblePrivateKeys[index]}
+                onTogglePrivateKey={() => togglePrivateKeyVisibility(index)}
               />
             ))}
           </div>
