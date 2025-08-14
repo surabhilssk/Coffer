@@ -19,6 +19,8 @@ interface WalletProps {
   isPrivateKeyVisible: boolean;
   onTogglePrivateKey: () => void;
   onDeleteWallet: () => void;
+  copyPublicKey: () => void;
+  copyPrivateKey: () => void;
 }
 
 export const WalletComponent = ({
@@ -28,6 +30,8 @@ export const WalletComponent = ({
   isPrivateKeyVisible,
   onTogglePrivateKey,
   onDeleteWallet,
+  copyPublicKey,
+  copyPrivateKey,
 }: WalletProps) => {
   const maskPrivateKey = (key: string) => {
     return "•".repeat(key.length);
@@ -70,14 +74,20 @@ export const WalletComponent = ({
       <div className="bg-secondary/40 px-9 py-5 rounded-xl">
         <div>
           <div className="text-xl font-medium">Public Key</div>
-          <div className="mt-2 text-muted-foreground font-light">
+          <div
+            className="mt-2 text-muted-foreground font-light w-fit hover:text-primary cursor-pointer"
+            onClick={copyPublicKey}
+          >
             {publicKey}
           </div>
         </div>
         <div className="mt-8">
           <div className="text-xl font-medium">Private Key</div>
           <div className="flex justify-between items-center mt-2">
-            <div className=" text-muted-foreground font-light">
+            <div
+              className=" text-muted-foreground font-light hover:text-primary cursor-pointer"
+              onClick={copyPrivateKey}
+            >
               {isPrivateKeyVisible ? privateKey : maskPrivateKey(privateKey)}
             </div>
             <div>

@@ -159,9 +159,12 @@ export const DashComponent = () => {
                 >
                   <div className="flex justify-center mt-7">
                     <div className="grid grid-cols-4 gap-2 font-light text-lg">
-                      {mnemonicArray.map((word) => {
+                      {mnemonicArray.map((word, index) => {
                         return (
-                          <div className="bg-secondary/40 w-72 py-4 text-center rounded-sm hover:bg-ring/20">
+                          <div
+                            key={index}
+                            className="bg-secondary/40 w-72 py-4 text-center rounded-sm hover:bg-ring/20"
+                          >
                             {word}
                           </div>
                         );
@@ -241,6 +244,12 @@ export const DashComponent = () => {
                   );
                   setBlockWallet(newWallet);
                   setVisiblePrivateKeys(newVisibility);
+                }}
+                copyPublicKey={() => {
+                  navigator.clipboard.writeText(wallet.publicKey);
+                }}
+                copyPrivateKey={() => {
+                  navigator.clipboard.writeText(wallet.privateKey);
                 }}
               />
             ))}
