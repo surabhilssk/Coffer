@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import { useState } from "react";
-import { mnemonicToSeedSync } from "bip39";
+import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { useBlockType } from "@/lib/store";
 import { derivePath } from "ed25519-hd-key";
 import { Keypair } from "@solana/web3.js";
@@ -30,6 +30,7 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import { Copy } from "lucide-react";
 
 interface blockWallet {
   publicKey: string;
@@ -45,8 +46,11 @@ export const DashComponent = () => {
   const [visiblePrivateKeys, setVisiblePrivateKeys] = useState<boolean[]>([]);
   const { blockType } = useBlockType();
 
-  const generateWalletfromMnemonic = (accountIndex: number) => {
-    const mnemonicValue = mnemonicInput.trim();
+  const mnemonicArray = mnemonic.split(" ");
+
+  const generateWallet = (accountIndex: number) => {
+    const mnemonicValue =
+      mnemonic || mnemonicInput.trim() || generateMnemonic();
     try {
       const seed = mnemonicToSeedSync(mnemonicValue);
       const path = `m/44'/${blockType}'/0'/${accountIndex}'`;
@@ -62,31 +66,24 @@ export const DashComponent = () => {
         const publicKey = Keypair.fromSecretKey(secretKey).publicKey;
         privateKeyEncoded = bs58.encode(secretKey);
         publicKeyEncoded = publicKey.toBase58();
-        setBlockWallet([
-          ...blockWallet,
-          {
-            publicKey: publicKeyEncoded,
-            privateKey: privateKeyEncoded,
-          },
-        ]);
-        setMnemonic(mnemonicInput);
       } else if (blockType === 60) {
         //Ethereum
         const privateKey = Buffer.from(derivedSeed).toString("hex");
         privateKeyEncoded = privateKey;
         const wallet = new ethers.Wallet(privateKey);
         publicKeyEncoded = wallet.address;
-        setBlockWallet([
-          ...blockWallet,
-          {
-            publicKey: publicKeyEncoded,
-            privateKey: privateKeyEncoded,
-          },
-        ]);
-        setMnemonic(mnemonicInput);
       } else {
         return null;
       }
+      setBlockWallet([
+        ...blockWallet,
+        {
+          publicKey: publicKeyEncoded,
+          privateKey: privateKeyEncoded,
+        },
+      ]);
+      setMnemonic(mnemonicValue);
+      setMnemonicInput("");
       return {
         publicKey: publicKeyEncoded,
         privateKey: privateKeyEncoded,
@@ -131,7 +128,7 @@ export const DashComponent = () => {
             <Button
               className="px-5 py-6 text-sm font-light cursor-pointer"
               onClick={() => {
-                generateWalletfromMnemonic(accountIndex);
+                generateWallet(accountIndex);
                 setVisiblePrivateKeys([...visiblePrivateKeys, false]);
                 setAccountIndex(accountIndex + 1);
               }}
@@ -153,7 +150,29 @@ export const DashComponent = () => {
                 <AccordionTrigger className="text-3xl font-semibold">
                   Your Secret Phrase
                 </AccordionTrigger>
-                <AccordionContent>This is the phrase</AccordionContent>
+                <AccordionContent
+                  asChild
+                  className="cursor-pointer"
+                  onClick={() => {
+                    navigator.clipboard.writeText(mnemonic);
+                  }}
+                >
+                  <div className="flex justify-center mt-7">
+                    <div className="grid grid-cols-4 gap-2 font-light text-lg">
+                      {mnemonicArray.map((word) => {
+                        return (
+                          <div className="bg-secondary/40 w-72 py-4 text-center rounded-sm hover:bg-ring/20">
+                            {word}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mt-7 text-muted-foreground hover:text-ring">
+                    <Copy size={18} />
+                    <div>Click anywhere to copy</div>
+                  </div>
+                </AccordionContent>
               </AccordionItem>
             </Accordion>
           </div>
@@ -165,7 +184,7 @@ export const DashComponent = () => {
               <Button
                 className="font-normal px-4 py-5 hover:cursor-pointer"
                 onClick={() => {
-                  generateWalletfromMnemonic(accountIndex);
+                  generateWallet(accountIndex);
                   setVisiblePrivateKeys([...visiblePrivateKeys, false]);
                   setAccountIndex(accountIndex + 1);
                 }}
