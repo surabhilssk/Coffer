@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { useBlockType } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export const LandingPage = () => {
   const { setBlockSolana, setBlockEthereum } = useBlockType();
@@ -26,12 +27,14 @@ export const LandingPage = () => {
     setBlockSolana();
     localStorage.setItem("pathType", "501");
     router.push("/dashboard");
+    toast.success("Wallet selected!");
   };
 
   const handleEthereum = () => {
     setBlockEthereum();
     localStorage.setItem("pathType", "60");
     router.push("/dashboard");
+    toast.success("Wallet selected!");
   };
 
   return (

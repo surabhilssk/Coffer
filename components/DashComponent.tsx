@@ -31,6 +31,7 @@ import {
 } from "./ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { Copy } from "lucide-react";
+import { toast } from "sonner";
 
 interface blockWallet {
   publicKey: string;
@@ -183,6 +184,7 @@ export const DashComponent = () => {
     if (newWallet.length === 0) {
       clearWallets();
     }
+    toast.success("Wallet deleted successfully!");
   };
 
   const clearWallets = () => {
@@ -193,6 +195,7 @@ export const DashComponent = () => {
     clearLocalStorage();
     localStorage.removeItem("pathType");
     router.replace("/");
+    toast.success("Wallets cleared successfully!");
   };
 
   return (
@@ -218,6 +221,7 @@ export const DashComponent = () => {
                 generateWallet(accountIndex);
                 setVisiblePrivateKeys([...visiblePrivateKeys, false]);
                 setAccountIndex(accountIndex + 1);
+                toast.success("Wallet generated successfully!");
               }}
             >
               {mnemonicInput ? "Add Wallet" : "Generate Wallet"}
@@ -242,6 +246,7 @@ export const DashComponent = () => {
                   className="cursor-pointer"
                   onClick={() => {
                     navigator.clipboard.writeText(mnemonic);
+                    toast.success("Copied to clipboard!");
                   }}
                 >
                   <div className="flex justify-center mt-7">
@@ -277,6 +282,7 @@ export const DashComponent = () => {
                   generateWallet(accountIndex);
                   setVisiblePrivateKeys([...visiblePrivateKeys, false]);
                   setAccountIndex(accountIndex + 1);
+                  toast.success("Wallet generated successfully!");
                 }}
               >
                 Add Wallet
@@ -297,7 +303,7 @@ export const DashComponent = () => {
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       This action cannot be undone. This will permanently delete
-                      your wallet and keys from local storage.
+                      your wallet and keys from localstorage.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -329,9 +335,11 @@ export const DashComponent = () => {
                 }}
                 copyPublicKey={() => {
                   navigator.clipboard.writeText(wallet.publicKey);
+                  toast.success("Public key copied to clipboard!");
                 }}
                 copyPrivateKey={() => {
                   navigator.clipboard.writeText(wallet.privateKey);
+                  toast.success("Private key copied to clipboard!");
                 }}
               />
             ))}
