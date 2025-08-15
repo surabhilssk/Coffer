@@ -38,7 +38,7 @@ export const LandingPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-svh sm:h-screen">
       <div>
         <div className="w-full flex justify-center mb-3">
           <Image
@@ -48,21 +48,21 @@ export const LandingPage = () => {
             height={70}
           />
         </div>
-        <div className="text-4xl font-semibold">
+        <div className="text-3xl sm:text-4xl font-semibold text-center">
           The go-to platform for managing your crypto
         </div>
-        <div className="text-xl text-primary/80 text-center mt-4">
+        <div className="text-lg sm:text-xl text-primary/80 text-center mt-4">
           Choose blockchain to get started
         </div>
         <div className="flex gap-3 mt-3 justify-center">
           <Button
-            className="px-8 py-6 text-md font-light cursor-pointer"
+            className="px-8 py-6 text-md font-medium cursor-pointer"
             onClick={handleSolana}
           >
             Solana
           </Button>
           <Button
-            className="px-7 py-6 text-md font-light cursor-pointer"
+            className="px-7 py-6 text-md font-medium cursor-pointer"
             onClick={handleEthereum}
           >
             Ethereum

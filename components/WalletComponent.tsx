@@ -75,7 +75,7 @@ export const WalletComponent = ({
         <div>
           <div className="text-xl font-medium">Public Key</div>
           <div
-            className="mt-2 text-muted-foreground font-light w-fit hover:text-primary cursor-pointer"
+            className="mt-2 text-muted-foreground font-light sm:w-fit hover:text-primary cursor-pointer truncate"
             onClick={copyPublicKey}
           >
             {publicKey}
@@ -85,7 +85,7 @@ export const WalletComponent = ({
           <div className="text-xl font-medium">Private Key</div>
           <div className="flex justify-between items-center mt-2">
             <div
-              className=" text-muted-foreground font-light hover:text-primary cursor-pointer"
+              className="text-muted-foreground font-light sm:w-fit hover:text-primary cursor-pointer truncate"
               onClick={copyPrivateKey}
             >
               {isPrivateKeyVisible ? privateKey : maskPrivateKey(privateKey)}

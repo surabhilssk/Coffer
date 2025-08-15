@@ -202,12 +202,14 @@ export const DashComponent = () => {
     <div>
       <AppBar />
       {!mnemonic && (
-        <div className="mt-10 px-16">
-          <div className="text-5xl font-semibold">Secret Recovery Phrase</div>
-          <div className="mt-3 text-primary/80 text-xl">
+        <div className="mt-10 px-3 sm:px-16">
+          <div className="text-4xl sm:text-5xl font-semibold">
+            Secret Recovery Phrase
+          </div>
+          <div className="mt-3 text-primary/80 text-lg sm:text-xl">
             Save these words in a safe place.
           </div>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 sm:flex sm:gap-2">
             <Input
               type="password"
               placeholder="Enter your secret phrase(or leave blank to generate)"
@@ -216,7 +218,7 @@ export const DashComponent = () => {
               }}
             />
             <Button
-              className="px-5 py-6 text-sm font-light cursor-pointer"
+              className="px-5 py-6 text-sm font-medium cursor-pointer w-full mt-3 sm:mt-0 sm:w-auto"
               onClick={() => {
                 generateWallet(accountIndex);
                 setVisiblePrivateKeys([...visiblePrivateKeys, false]);
@@ -230,7 +232,7 @@ export const DashComponent = () => {
         </div>
       )}
       {(blockType === 501 || blockType === 60) && mnemonic && (
-        <div className="mt-5 px-16 pb-10">
+        <div className="mt-5 sm:px-16 px-3 pb-10">
           <div>
             <Accordion
               type="single"
@@ -250,12 +252,12 @@ export const DashComponent = () => {
                   }}
                 >
                   <div className="flex justify-center mt-7">
-                    <div className="grid grid-cols-4 gap-2 font-light text-lg">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 font-light text-sm sm:text-lg">
                       {mnemonicArray.map((word, index) => {
                         return (
                           <div
                             key={index}
-                            className="bg-secondary/40 w-72 py-4 text-center rounded-sm hover:bg-ring/20"
+                            className="bg-secondary/40 w-36 sm:w-72 py-4 text-center rounded-sm hover:bg-ring/20"
                           >
                             {word}
                           </div>
@@ -271,11 +273,11 @@ export const DashComponent = () => {
               </AccordionItem>
             </Accordion>
           </div>
-          <div className="mt-10 flex justify-between items-center">
-            <div className="text-4xl font-semibold">
+          <div className="mt-10 sm:flex justify-between items-center">
+            <div className="text-3xl sm:text-4xl font-semibold">
               {blockType === 501 ? "Solana Wallet" : "Ethereum Wallet"}
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-3 sm:mt-0">
               <Button
                 className="font-normal px-4 py-5 hover:cursor-pointer"
                 onClick={() => {
