@@ -4,18 +4,33 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { useBlockType } from "@/lib/store";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export const LandingPage = () => {
   const { setBlockSolana, setBlockEthereum } = useBlockType();
   const router = useRouter();
 
+  useEffect(() => {
+    const pathType = localStorage.getItem("pathType");
+    if (pathType) {
+      if (pathType === "501") {
+        setBlockSolana();
+      } else if (pathType === "60") {
+        setBlockEthereum();
+      }
+      router.push("/dashboard");
+    }
+  }, []);
+
   const handleSolana = () => {
     setBlockSolana();
+    localStorage.setItem("pathType", "501");
     router.push("/dashboard");
   };
 
   const handleEthereum = () => {
     setBlockEthereum();
+    localStorage.setItem("pathType", "60");
     router.push("/dashboard");
   };
 

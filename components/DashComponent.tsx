@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { useBlockType } from "@/lib/store";
 import { derivePath } from "ed25519-hd-key";
@@ -37,6 +37,13 @@ interface blockWallet {
   privateKey: string;
 }
 
+const StorageKeys = {
+  wallets: "crypto_wallets",
+  mnemonics: "crypto_mnemonics",
+  account_index: "crypto_account_index",
+  visible_keys: "crypto_visible_private_keys",
+};
+
 export const DashComponent = () => {
   const router = useRouter();
   const [blockWallet, setBlockWallet] = useState<blockWallet[]>([]);
@@ -44,7 +51,73 @@ export const DashComponent = () => {
   const [mnemonic, setMnemonic] = useState<string>("");
   const [accountIndex, setAccountIndex] = useState<number>(0);
   const [visiblePrivateKeys, setVisiblePrivateKeys] = useState<boolean[]>([]);
-  const { blockType } = useBlockType();
+  const { blockType, setBlockType } = useBlockType();
+
+  const saveToLocalStorage = () => {
+    try {
+      localStorage.setItem(StorageKeys.wallets, JSON.stringify(blockWallet));
+      localStorage.setItem(StorageKeys.mnemonics, mnemonic);
+      localStorage.setItem(StorageKeys.account_index, accountIndex.toString());
+      localStorage.setItem(
+        StorageKeys.visible_keys,
+        JSON.stringify(visiblePrivateKeys)
+      );
+    } catch (error) {
+      console.error("Error saving to local storage: ", error);
+    }
+  };
+
+  const loadFromLocalStorage = () => {
+    try {
+      const savedWallets = localStorage.getItem(StorageKeys.wallets);
+      const savedMnemonic = localStorage.getItem(StorageKeys.mnemonics);
+      const savedAccountIndex = localStorage.getItem(StorageKeys.account_index);
+      const savedVisibleKeys = localStorage.getItem(StorageKeys.visible_keys);
+
+      if (savedWallets) {
+        setBlockWallet(JSON.parse(savedWallets));
+      }
+      if (savedMnemonic) {
+        setMnemonic(savedMnemonic);
+      }
+      if (savedAccountIndex) {
+        setAccountIndex(parseInt(savedAccountIndex, 10));
+      }
+      if (savedVisibleKeys) {
+        setVisiblePrivateKeys(JSON.parse(savedVisibleKeys));
+      }
+    } catch (error) {
+      console.error("Error loading from localStorage:", error);
+    }
+  };
+
+  const clearLocalStorage = () => {
+    try {
+      Object.values(StorageKeys).forEach((key) => {
+        localStorage.removeItem(key);
+      });
+    } catch (error) {
+      console.error("Error clearing localStorage:", error);
+    }
+  };
+
+  useEffect(() => {
+    const pathType = localStorage.getItem("pathType");
+    if (pathType) {
+      const pathTypeInt = parseInt(pathType, 10);
+      if (!isNaN(pathTypeInt)) {
+        setBlockType(pathTypeInt);
+      }
+    }
+
+    loadFromLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    if (blockWallet.length > 0 || mnemonic) {
+      saveToLocalStorage();
+    }
+  }, [blockWallet, mnemonic, accountIndex, visiblePrivateKeys]);
 
   const mnemonicArray = mnemonic.split(" ");
 
@@ -100,11 +173,25 @@ export const DashComponent = () => {
     );
   };
 
+  const deleteWallet = (index: number) => {
+    const newWallet = blockWallet.filter((_, i) => i !== index);
+    const newVisibility = visiblePrivateKeys.filter((_, i) => i !== index);
+
+    setBlockWallet(newWallet);
+    setVisiblePrivateKeys(newVisibility);
+
+    if (newWallet.length === 0) {
+      clearWallets();
+    }
+  };
+
   const clearWallets = () => {
     setBlockWallet([]);
     setVisiblePrivateKeys([]);
     setMnemonic("");
     setAccountIndex(0);
+    clearLocalStorage();
+    localStorage.removeItem("pathType");
     router.replace("/");
   };
 
@@ -238,12 +325,7 @@ export const DashComponent = () => {
                 isPrivateKeyVisible={visiblePrivateKeys[index]}
                 onTogglePrivateKey={() => togglePrivateKeyVisibility(index)}
                 onDeleteWallet={() => {
-                  const newWallet = blockWallet.filter((_, i) => i !== index);
-                  const newVisibility = visiblePrivateKeys.filter(
-                    (_, i) => i !== index
-                  );
-                  setBlockWallet(newWallet);
-                  setVisiblePrivateKeys(newVisibility);
+                  deleteWallet(index);
                 }}
                 copyPublicKey={() => {
                   navigator.clipboard.writeText(wallet.publicKey);
