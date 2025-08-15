@@ -49,7 +49,7 @@ export const WalletComponent = ({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  You're going to delete this wallet?
+                  You&apos;re going to delete this wallet?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete
