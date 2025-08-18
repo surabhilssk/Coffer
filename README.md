@@ -1,6 +1,6 @@
 # Coffer
 
-Coffer is a Nextjs app designed to generate and manage cryptocurrency wallets. It supports both the generation of new wallets and the entry of existing recovery phrases of both Solana & Ethereum. It displays generated private and public keys, provides functionality to copy them to the clipboard, and includes features for showing or hiding sensitive information.
+Coffer is a Nextjs app designed to generate and manage cryptocurrency wallets. It supports both the generation of new wallets and the entry of existing recovery phrases of both Solana & Ethereum. It displays generated private and public keys, provides functionality to copy them to the clipboard, and includes features for showing or hiding sensitive information. Additionaly, it now supports access to solana devnet which provides balance checking and airdropping functionalities.
 
 ## Features
 
@@ -44,6 +44,12 @@ Coffer is a Nextjs app designed to generate and manage cryptocurrency wallets. I
 
 4. **Clipboard Copy**:
    - Provides functionality to copy private keys, public keys, and the recovery phrase to the clipboard.
+
+5. **Balance Checking**:
+   - Allows to check balance for public keys in the solana blockchain
+  
+6. **Airdropping**:
+   - Allow users to airdrop upto 2sol every 8 hours from the solana devnet
 
 ## Contributing
 
