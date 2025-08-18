@@ -9,7 +9,13 @@ import { useEffect, useState } from "react";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { useBlockType } from "@/lib/store";
 import { derivePath } from "ed25519-hd-key";
-import { Keypair } from "@solana/web3.js";
+import {
+  Keypair,
+  Connection,
+  PublicKey,
+  clusterApiUrl,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
 import { ethers } from "ethers";
 import {
   Accordion,
@@ -36,6 +42,7 @@ import { toast } from "sonner";
 interface blockWallet {
   publicKey: string;
   privateKey: string;
+  walletBalance: string;
 }
 
 const StorageKeys = {
@@ -154,6 +161,7 @@ export const DashComponent = () => {
         {
           publicKey: publicKeyEncoded,
           privateKey: privateKeyEncoded,
+          walletBalance: "--.--",
         },
       ]);
       setMnemonic(mnemonicValue);
@@ -196,6 +204,47 @@ export const DashComponent = () => {
     localStorage.removeItem("pathType");
     router.replace("/");
     toast.success("Wallets cleared successfully!");
+  };
+
+  const checkSolanaBalance = async (publicKey: string) => {
+    const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+    try {
+      const publicKeyValue = new PublicKey(publicKey);
+      const balance = await connection.getBalance(publicKeyValue);
+      setBlockWallet((prevWallets) => {
+        return prevWallets.map((wallet) => {
+          if (wallet.publicKey === publicKey) {
+            return {
+              ...wallet,
+              walletBalance: (balance / 1000000000).toString(),
+            };
+          }
+          return wallet;
+        });
+      });
+      toast.success("Balance checked successfully!");
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error occured while checking balance.");
+    }
+  };
+
+  const airdropSolana = async (publicKey: string) => {
+    const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+    const reciever = new PublicKey(publicKey);
+    const airdropAmount = 1 * LAMPORTS_PER_SOL;
+    toast("Airdropping...", { duration: 9000 });
+    try {
+      const signature = await connection.requestAirdrop(
+        reciever,
+        airdropAmount
+      );
+      toast.success("Airdrop successful!");
+    } catch (e) {
+      return toast.error(
+        "Rate limit reached. Please try again after few minutes."
+      );
+    }
   };
 
   return (
@@ -332,6 +381,9 @@ export const DashComponent = () => {
                 publicKey={wallet.publicKey}
                 isPrivateKeyVisible={visiblePrivateKeys[index]}
                 onTogglePrivateKey={() => togglePrivateKeyVisibility(index)}
+                balanceCheck={() => checkSolanaBalance(wallet.publicKey)}
+                airdrop={() => airdropSolana(wallet.publicKey)}
+                solAmount={wallet.walletBalance}
                 onDeleteWallet={() => {
                   deleteWallet(index);
                 }}
