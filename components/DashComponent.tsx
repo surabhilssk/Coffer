@@ -1,6 +1,7 @@
 "use client";
 
 import { AppBar } from "./AppBar";
+import { animate, AnimatePresence, motion, stagger } from "motion/react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import nacl from "tweetnacl";
@@ -247,18 +248,58 @@ export const DashComponent = () => {
     }
   };
 
+  const containerVariants = {
+    hidden: {
+      y: -20,
+      opacity: 0,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: {
+      y: -20,
+      opacity: 0,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
+
   return (
     <div>
       <AppBar />
       {!mnemonic && (
-        <div className="mt-10 px-3 sm:px-16">
-          <div className="text-4xl sm:text-5xl font-semibold">
+        <motion.div
+          className="mt-10 px-3 sm:px-16"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div
+            className="text-4xl sm:text-5xl font-semibold"
+            variants={itemVariants}
+          >
             Secret Recovery Phrase
-          </div>
-          <div className="mt-3 text-primary/80 text-lg sm:text-xl">
+          </motion.div>
+          <motion.div
+            className="mt-3 text-primary/80 text-lg sm:text-xl"
+            variants={itemVariants}
+          >
             Save these words in a safe place.
-          </div>
-          <div className="mt-2 sm:flex sm:gap-2">
+          </motion.div>
+          <motion.div className="mt-2 sm:flex sm:gap-2" variants={itemVariants}>
             <Input
               type="password"
               placeholder="Enter your secret phrase(or leave blank to generate)"
@@ -277,12 +318,17 @@ export const DashComponent = () => {
             >
               {mnemonicInput ? "Add Wallet" : "Generate Wallet"}
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
       {(blockType === 501 || blockType === 60) && mnemonic && (
-        <div className="mt-5 sm:px-16 px-3 pb-10">
-          <div>
+        <motion.div
+          className="mt-5 sm:px-16 px-3 pb-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants}>
             <Accordion
               type="single"
               collapsible
@@ -321,8 +367,11 @@ export const DashComponent = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </div>
-          <div className="mt-10 sm:flex justify-between items-center">
+          </motion.div>
+          <motion.div
+            className="mt-10 sm:flex justify-between items-center"
+            variants={itemVariants}
+          >
             <div className="text-3xl sm:text-4xl font-semibold">
               {blockType === 501 ? "Solana Wallet" : "Ethereum Wallet"}
             </div>
@@ -371,34 +420,42 @@ export const DashComponent = () => {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-          </div>
-          <div>
-            {blockWallet.map((wallet, index) => (
-              <WalletComponent
-                key={wallet.publicKey}
-                index={index + 1}
-                privateKey={wallet.privateKey}
-                publicKey={wallet.publicKey}
-                isPrivateKeyVisible={visiblePrivateKeys[index]}
-                onTogglePrivateKey={() => togglePrivateKeyVisibility(index)}
-                balanceCheck={() => checkSolanaBalance(wallet.publicKey)}
-                airdrop={() => airdropSolana(wallet.publicKey)}
-                solAmount={wallet.walletBalance}
-                onDeleteWallet={() => {
-                  deleteWallet(index);
-                }}
-                copyPublicKey={() => {
-                  navigator.clipboard.writeText(wallet.publicKey);
-                  toast.success("Public key copied to clipboard!");
-                }}
-                copyPrivateKey={() => {
-                  navigator.clipboard.writeText(wallet.privateKey);
-                  toast.success("Private key copied to clipboard!");
-                }}
-              />
-            ))}
-          </div>
-        </div>
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <AnimatePresence>
+              {blockWallet.map((wallet, index) => (
+                <motion.div
+                  key={wallet.publicKey}
+                  variants={itemVariants}
+                  exit={{ y: -20, opacity: 0, transition: { duration: 0.3 } }}
+                >
+                  <WalletComponent
+                    key={wallet.publicKey}
+                    index={index + 1}
+                    privateKey={wallet.privateKey}
+                    publicKey={wallet.publicKey}
+                    isPrivateKeyVisible={visiblePrivateKeys[index]}
+                    onTogglePrivateKey={() => togglePrivateKeyVisibility(index)}
+                    balanceCheck={() => checkSolanaBalance(wallet.publicKey)}
+                    airdrop={() => airdropSolana(wallet.publicKey)}
+                    solAmount={wallet.walletBalance}
+                    onDeleteWallet={() => {
+                      deleteWallet(index);
+                    }}
+                    copyPublicKey={() => {
+                      navigator.clipboard.writeText(wallet.publicKey);
+                      toast.success("Public key copied to clipboard!");
+                    }}
+                    copyPrivateKey={() => {
+                      navigator.clipboard.writeText(wallet.privateKey);
+                      toast.success("Private key copied to clipboard!");
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );
