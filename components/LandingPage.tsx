@@ -6,6 +6,7 @@ import { useBlockType } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { motion, stagger } from "motion/react";
 
 export const LandingPage = () => {
   const { setBlockSolana, setBlockEthereum } = useBlockType();
@@ -37,24 +38,69 @@ export const LandingPage = () => {
     toast.success("Wallet selected!");
   };
 
+  const containerVariants = {
+    hidden: {
+      y: -20,
+      opacity: 0,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: {
+      y: -20,
+      opacity: 0,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
+
   return (
     <div className="flex justify-center items-center h-svh sm:h-screen">
-      <div>
-        <div className="w-full flex justify-center mb-3">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div
+          className="w-full flex justify-center mb-3"
+          variants={itemVariants}
+        >
           <Image
             src={"/coffer_logo.webp"}
             alt="coffer_logo"
             width={70}
             height={70}
           />
-        </div>
-        <div className="text-3xl sm:text-4xl font-semibold text-center">
+        </motion.div>
+        <motion.div
+          className="text-3xl sm:text-4xl font-semibold text-center"
+          variants={itemVariants}
+        >
           The go-to platform for managing your crypto
-        </div>
-        <div className="text-lg sm:text-xl text-primary/80 text-center mt-4">
+        </motion.div>
+        <motion.div
+          className="text-lg sm:text-xl text-primary/80 text-center mt-4"
+          variants={itemVariants}
+        >
           Choose blockchain to get started
-        </div>
-        <div className="flex gap-3 mt-3 justify-center">
+        </motion.div>
+        <motion.div
+          className="flex gap-3 mt-3 justify-center"
+          variants={itemVariants}
+        >
           <Button
             className="px-8 py-6 text-md font-medium cursor-pointer"
             onClick={handleSolana}
@@ -67,8 +113,8 @@ export const LandingPage = () => {
           >
             Ethereum
           </Button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
